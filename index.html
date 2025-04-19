@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fiesta Teresa Perdomo - 78 Años</title>
+  <title>Fiesta Teresa Perdomo - 79 Años</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -126,7 +126,7 @@
 </head>
 <body>
   <header>
-    <h1>🎂 Fiesta de Teresa Perdomo - 78 Años 🎉</h1>
+    <h1>🎂 Fiesta de Teresa Perdomo - 79 Años 🎉</h1>
     <p>¡Contabilidad de Beneficiarios y Actividades!</p>
   </header>
 
@@ -180,36 +180,49 @@
     <tbody id="actividades-body">
       <tr>
         <td>Mariachis</td>
-        <td class="presupuesto" data-presupuesto="500000">$500,000</td>
-        <td><input type="number" value="0" class="ejecucion-input" /></td>
+        <td class="presupuesto" data-presupuesto="500000" >$500,000</td>
+        <td><input type="number" value="300" class="ejecucion-input" disabled /></td>
         <td class="diferencia">0%</td>
       </tr>
       <tr>
         <td>Pastel</td>
         <td class="presupuesto" data-presupuesto="150000">$150,000</td>
-        <td><input type="number" value="0" class="ejecucion-input" /></td>
+        <td><input type="number" value="0" class="ejecucion-input" disabled /></td>
         <td class="diferencia">0%</td>
       </tr>
     </tbody>
   </table>
 
   <script>
-    const nombres = [
-      'Carlos', 'Marta', 'Luisa', 'Javier', 'Natalia',
-      'Pedro', 'Ana', 'Esteban', 'Sofía', 'Camila'
+    // Valores iniciales en un arreglo (Beneficiarios y Actividades)
+    const beneficiarios = [
+      { nombre: 'Carlos', valor: 80000, estado: 'confirmado' },
+      { nombre: 'Marta', valor: 80000, estado: 'confirmado' },
+      { nombre: 'Luisa', valor: 80000, estado: 'no confirmado' },
+      { nombre: 'Javier', valor: 80000, estado: 'pagado' },
+      { nombre: 'Natalia', valor: 80000, estado: 'confirmado' },
+      { nombre: 'Pedro', valor: 80000, estado: 'pagado' },
+      { nombre: 'Ana', valor: 80000, estado: 'no confirmado' },
+      { nombre: 'Esteban', valor: 80000, estado: 'pagado' },
+      { nombre: 'Sofía', valor: 80000, estado: 'confirmado' },
+      { nombre: 'Camila', valor: 80000, estado: 'pagado' }
+    ];
+
+    const actividades = [
+      { actividad: 'Mariachis', presupuesto: 500000, ejecutado: 0 },
+      { actividad: 'Pastel', presupuesto: 150000, ejecutado: 0 }
     ];
 
     const tbody = document.querySelector('#beneficiarios tbody');
     const totalDisponibleEl = document.getElementById('totalDisponible');
     const gaugeRecaudado = document.getElementById('gaugeRecaudado');
     const gaugeRecaudadoLabel = document.getElementById('gaugeRecaudadoLabel');
-
     const gaugeEjecutado = document.getElementById('gaugeEjecutado');
     const gaugeEjecutadoLabel = document.getElementById('gaugeEjecutadoLabel');
 
     function renderTable() {
       tbody.innerHTML = '';
-      nombres.forEach((nombre) => {
+      beneficiarios.forEach(({ nombre, valor, estado }) => {
         const row = document.createElement('tr');
 
         const estadoSelect = document.createElement('select');
@@ -220,15 +233,17 @@
           estadoSelect.appendChild(option);
         });
 
+        estadoSelect.value = estado;
         estadoSelect.addEventListener('change', updateResumen);
+        estadoSelect.disabled = true;
 
         const heartTd = document.createElement('td');
         heartTd.className = 'heart';
-        heartTd.innerHTML = '🤍';
+        heartTd.innerHTML = estado === 'pagado' ? '❤️' : estado === 'no confirmado' ? '😢' : '🤍';
 
         row.innerHTML = `
           <td>${nombre}</td>
-          <td class="valor">$80,000</td>
+          <td class="valor">$${valor.toLocaleString()}</td>
         `;
         const estadoTd = document.createElement('td');
         estadoTd.appendChild(estadoSelect);

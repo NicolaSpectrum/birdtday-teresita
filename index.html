@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiesta Teresa Perdomo - 78 Años</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffe6f0, #fff0f5);
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #fcd5ce;
+      border-radius: 10px;
+    }
+
+    header h1 {
+      font-size: 2em;
+      margin: 0;
+      color: #c9184a;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #f8c4d3;
+    }
+
+    select, input[type="number"] {
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 80px;
+    }
+
+    .heart {
+      font-size: 1.5em;
+    }
+
+    .gauge-container {
+      margin: 30px auto;
+      text-align: center;
+    }
+
+    .gauge {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: conic-gradient(#ff5e78 var(--percent), #ddd 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      color: #c9184a;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .gauge::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .gauge span {
+      position: absolute;
+      z-index: 10;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      th, td {
+        font-size: 14px;
+        padding: 8px;
+      }
+    }
+
+    .activities-table {
+      margin-top: 40px;
+    }
+
+    .footer-total {
+      font-weight: bold;
+      background-color: #ffe4e1;
+    }
+
+    .birthday-icons {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .birthday-icons span {
+      font-size: 2em;
+      margin: 0 5px;
+    }
+
+    .gauges-grid {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎂 Fiesta de Teresa Perdomo - 78 Años 🎉</h1>
+    <p>¡Contabilidad de Beneficiarios y Actividades!</p>
+  </header>
+
+  <div class="birthday-icons">
+    <span>🎈</span><span>🎁</span><span>🍰</span><span>🎊</span><span>🎶</span>
+  </div>
+
+  <table id="beneficiarios">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Valor</th>
+        <th>Estado</th>
+        <th>❤️</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <tr class="footer-total">
+        <td colspan="4" id="totalDisponible">Total Disponible: $0</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="gauges-grid">
+    <div class="gauge-container">
+      <h3>Recaudado</h3>
+      <div class="gauge" id="gaugeRecaudado" style="--percent: 0%">
+        <span id="gaugeRecaudadoLabel">0%</span>
+      </div>
+    </div>
+
+    <div class="gauge-container">
+      <h3>Presupuesto Ejecutado</h3>
+      <div class="gauge" id="gaugeEjecutado" style="--percent: 0%">
+        <span id="gaugeEjecutadoLabel">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <table class="activities-table">
+    <thead>
+      <tr>
+        <th>Actividad</th>
+        <th>Presupuesto</th>
+        <th>Ejecución</th>
+        <th>Diferencia (%)</th>
+      </tr>
+    </thead>
+    <tbody id="actividades-body">
+      <tr>
+        <td>Mariachis</td>
+        <td class="presupuesto" data-presupuesto="500000">$500,000</td>
+        <td><input type="number" value="0" class="ejecucion-input" /></td>
+        <td class="diferencia">0%</td>
+      </tr>
+      <tr>
+        <td>Pastel</td>
+        <td class="presupuesto" data-presupuesto="150000">$150,000</td>
+        <td><input type="number" value="0" class="ejecucion-input" /></td>
+        <td class="diferencia">0%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    const nombres = [
+      'Carlos', 'Marta', 'Luisa', 'Javier', 'Natalia',
+      'Pedro', 'Ana', 'Esteban', 'Sofía', 'Camila'
+    ];
+
+    const tbody = document.querySelector('#beneficiarios tbody');
+    const totalDisponibleEl = document.getElementById('totalDisponible');
+    const gaugeRecaudado = document.getElementById('gaugeRecaudado');
+    const gaugeRecaudadoLabel = document.getElementById('gaugeRecaudadoLabel');
+
+    const gaugeEjecutado = document.getElementById('gaugeEjecutado');
+    const gaugeEjecutadoLabel = document.getElementById('gaugeEjecutadoLabel');
+
+    function renderTable() {
+      tbody.innerHTML = '';
+      nombres.forEach((nombre) => {
+        const row = document.createElement('tr');
+
+        const estadoSelect = document.createElement('select');
+        ['confirmado', 'no confirmado', 'pagado'].forEach(estado => {
+          const option = document.createElement('option');
+          option.value = estado;
+          option.textContent = estado;
+          estadoSelect.appendChild(option);
+        });
+
+        estadoSelect.addEventListener('change', updateResumen);
+
+        const heartTd = document.createElement('td');
+        heartTd.className = 'heart';
+        heartTd.innerHTML = '🤍';
+
+        row.innerHTML = `
+          <td>${nombre}</td>
+          <td class="valor">$80,000</td>
+        `;
+        const estadoTd = document.createElement('td');
+        estadoTd.appendChild(estadoSelect);
+        row.appendChild(estadoTd);
+        row.appendChild(heartTd);
+
+        tbody.appendChild(row);
+      });
+
+      updateResumen();
+    }
+
+    function updateResumen() {
+      const rows = tbody.querySelectorAll('tr');
+      let total = 0;
+      let pagado = 0;
+
+      rows.forEach(row => {
+        const valor = 80000;
+        total += valor;
+        const estado = row.querySelector('select').value;
+        const heartTd = row.querySelector('.heart');
+
+        if (estado === 'pagado') {
+          pagado += valor;
+          heartTd.textContent = '❤️';
+        } else if (estado === 'no confirmado') {
+          heartTd.textContent = '😢';
+        } else {
+          heartTd.textContent = '🤍';
+        }
+      });
+
+      totalDisponibleEl.textContent = `Total Disponible: $${pagado.toLocaleString()}`;
+      const porcentaje = (pagado / total) * 100;
+      gaugeRecaudado.style.setProperty('--percent', `${porcentaje}%`);
+      gaugeRecaudadoLabel.textContent = `${Math.round(porcentaje)}%`;
+
+      updateEjecutadoGauge();
+    }
+
+    function updateEjecutadoGauge() {
+      const ejecuciones = document.querySelectorAll('.ejecucion-input');
+      const presupuestos = document.querySelectorAll('.presupuesto');
+      const diferencias = document.querySelectorAll('.diferencia');
+
+      let totalPresupuesto = 0;
+      let totalEjecutado = 0;
+
+      ejecuciones.forEach((input, index) => {
+        const ejecutado = parseFloat(input.value) || 0;
+        const presupuesto = parseFloat(presupuestos[index].dataset.presupuesto);
+        const diferencia = presupuesto > 0 ? (ejecutado / presupuesto) * 100 : 0;
+
+        diferencias[index].textContent = `${Math.round(diferencia)}%`;
+        totalPresupuesto += presupuesto;
+        totalEjecutado += ejecutado;
+      });
+
+      const porcentaje = totalPresupuesto > 0 ? (totalEjecutado / totalPresupuesto) * 100 : 0;
+      gaugeEjecutado.style.setProperty('--percent', `${porcentaje}%`);
+      gaugeEjecutadoLabel.textContent = `${Math.round(porcentaje)}%`;
+    }
+
+    document.querySelectorAll('.ejecucion-input').forEach(input => {
+      input.addEventListener('input', updateEjecutadoGauge);
+    });
+
+    renderTable();
+  </script>
+</body>
+</html>
